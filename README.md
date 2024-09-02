@@ -17,9 +17,9 @@
 
 - **Backend**:
   - [Node.js](https://nodejs.org/) - A JavaScript runtime built on Chrome's V8 JavaScript engine.
-  - [Hono](https://expressjs.com/) - A minimal and flexible Node.js web application framework.
-  - [Zod] - For Validation of the requests.
-  - [Postgressql] - A SQL DataBase.
+  - [Hono](https://hono.com/) - A minimal and flexible Node.js web application framework.
+  - [Zod](https://zod.com/) - For Validation of the requests.
+  - [Postgressql](https://neon.com/) - A SQL DataBase.
   - [Prisma](https://www.prisma.io/) - An open-source ORM for Node.js and TypeScript.
   - [JWT](https://jwt.io/) - JSON Web Tokens for user authentication.
   
