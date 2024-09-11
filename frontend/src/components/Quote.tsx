@@ -10,7 +10,7 @@ export const Quote = () => {
                 <p className="text-3xl font-semibold">- Steve Jobs</p>
             </div>
             <div className="text-center">
-                <p className="text-sm text-slate-500 font-light">CEO, Apple</p>
+                <p className="text-sm text-slate-100 font-light">CEO, Apple</p>
             </div>
         </div>
     );

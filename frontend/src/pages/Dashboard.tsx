@@ -2,7 +2,7 @@ import { InputBox } from "../components/InputBox";
 import { useState } from "react";
 import { Quote } from "../components/Quote";
 
-export const Signin: React.FC = () => {
+export const Dashboard: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
