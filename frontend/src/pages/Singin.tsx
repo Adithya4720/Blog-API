@@ -7,32 +7,45 @@ import { useNavigate } from "react-router-dom";
 export const Signin: React.FC = () => {
   const [emailorname, setEmailorname] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
   const navigate = useNavigate();
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
       const timer = setTimeout(() => {
-        navigate("/dashboard");
+        navigate("/");
       }, 2000);
 
       return () => clearTimeout(timer);
+    } else {
+      navigate("/signin");
     }
   }, [navigate]);
 
   const handlesignup = async () => {
+    setLoading(true);
+    setError("");
+
     try {
-      const response = await axios.post("http://localhost:8787/api/v1/user/signin", {
-        email: emailorname,
-        password: password,
-      });
+      const response = await axios.post(
+        "http://localhost:8787/api/v1/user/signin",
+        {
+          email: emailorname,
+          password: password,
+        }
+      );
 
       if (response.status === 200) {
         localStorage.setItem("token", response.data.jwt);
-        navigate("/dashboard");
+        navigate("/");
       }
     } catch (e) {
       console.error("Sign-in error: ", e);
+      setError("Invalid credentials. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,7 +69,7 @@ export const Signin: React.FC = () => {
         </div>
 
         <div className="flex-1 flex items-center justify-center bg-gray-900 p-8">
-          <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full">
+          <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full hover:scale-110 transition-transform duration-300">
             <h2 className="text-3xl font-bold mb-6 text-center">Sign In</h2>
 
             <InputBox
@@ -72,15 +85,20 @@ export const Signin: React.FC = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
 
+            {error && (
+              <p className="text-red-500 text-sm mb-4">{error}</p>
+            )}
+
             <button
-              className="bg-indigo-500 text-white font-semibold py-2 px-4 rounded mt-4 w-full hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="bg-indigo-500 text-white font-semibold py-2 px-4 rounded mt-4 w-full"
               onClick={handlesignup}
+              disabled={loading}
             >
-              Sign In
+              {loading ? "Logging in..." : "Sign In"}
             </button>
             <button
               className="mt-4 text-white font-semibold w-full hover:underline"
-              onClick={() => console.log("Create Account clicked")}
+              onClick={() => navigate("/signup")}
             >
               Create Account?
             </button>

@@ -1,7 +1,7 @@
 export const Quote = () => {
     return (
         <div className="text-3xl h-screen flex flex-col justify-center items-center">
-            <div className="text-center">
+            <div className="text-center mt-4">
                 <p className="text-3xl max-w-md font-semibold">
                     "The only way to do great work is to love what you do."
                 </p>
