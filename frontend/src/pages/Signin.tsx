@@ -97,7 +97,7 @@ export const Signin: React.FC = () => {
               {loading ? "Logging in..." : "Sign In"}
             </button>
             <button
-              className="mt-4 text-white font-semibold w-full hover:underline"
+              className="mt-4 text-slate-800 font-semibold w-full hover:underline"
               onClick={() => navigate("/signup")}
             >
               Create Account?
