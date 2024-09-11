@@ -25,8 +25,7 @@ bookRouter.use(async (c, next) => {
 		c.status(401);
 		return c.json({ error: "unauthorized" });
 	}
-    //@ts-ignore
-	c.set('userId', payload.id);
+	c.set('userId', payload.id as string);
 	await next()
 });
 

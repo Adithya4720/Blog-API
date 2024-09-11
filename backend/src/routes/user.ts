@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
-import { sign,verify } from "hono/jwt";
+import { sign, verify } from "hono/jwt";
 
 export const userRouter = new Hono<{
   Bindings: {
@@ -10,10 +10,10 @@ export const userRouter = new Hono<{
   };
   Variables: {
     userId: string;
-  };  
+  };
 }>();
 
-userRouter.use('/me', async (c, next) => {
+userRouter.use("/me", async (c, next) => {
   const authheader = c.req.header("Authorization");
   if (!authheader) {
     c.status(401);
@@ -21,18 +21,17 @@ userRouter.use('/me', async (c, next) => {
   }
   console.log(authheader);
   const token = authheader.split(" ")[1];
-  try{
+  try {
     const payload = await verify(token, c.env.JWT_SECRET);
     c.set("userId", payload.id as string);
     return next();
-  }
-  catch(e){
+  } catch (e) {
     c.status(401);
     return c.json({ error: "Unauthorized in authheader" });
   }
-})
+});
 
-userRouter.get("/me",async (c) => {
+userRouter.get("/me", async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
@@ -45,6 +44,7 @@ userRouter.get("/me",async (c) => {
     where: {
       id: userId,
     },
+    
   });
 
   return c.json(user);
@@ -83,13 +83,13 @@ userRouter.post("/signin", async (c) => {
         {
           email: body.email,
           password: body.password,
-        } ,
+        },
         {
           name: body.email,
           password: body.password,
         },
-      ]
-    }
+      ],
+    },
   });
 
   if (!user) {
