@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
+import { userRouter } from "./user";
 
 export const bookRouter = new Hono<{
   Bindings: {
@@ -70,6 +71,18 @@ bookRouter.put("/", async (c) => {
   return c.text("updated post");
 });
 
+bookRouter.get("/posts", async (c) => {
+	const prisma = new PrismaClient({
+	  datasourceUrl: c.env?.DATABASE_URL,
+	}).$extends(withAccelerate());
+	const posts = await prisma.post.findMany({
+	  where : {
+		  published : true
+	  },
+	});
+	return c.json(posts);
+  });
+
 bookRouter.get("/:id", async (c) => {
   const id = c.req.param("id");
   const prisma = new PrismaClient({
@@ -85,17 +98,4 @@ bookRouter.get("/:id", async (c) => {
   return c.json(post);
 });
 
-bookRouter.get("/blogs", async (c) => {
-  const prisma = new PrismaClient({
-    datasourceUrl: c.env?.DATABASE_URL,
-  }).$extends(withAccelerate());
 
-  const posts = await prisma.post.findMany({
-    include: {
-      author: true,
-    },
-  });
-
-  console.log(posts); 
-  return c.json(posts);
-});
