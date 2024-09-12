@@ -44,7 +44,12 @@ userRouter.get("/me", async (c) => {
     where: {
       id: userId,
     },
-    
+    select:{
+      email:true,
+      name:true,
+      id : true,
+      posts:true
+    }
   });
 
   return c.json(user);
