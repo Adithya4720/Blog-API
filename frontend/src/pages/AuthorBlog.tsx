@@ -22,7 +22,7 @@ export const AuthorBlogs: React.FC = () => {
 
     try {
       const response = await axios.get(
-        "http://localhost:8787/api/v1/blog/" + authorId,
+        "https://backend.hegdeadithyak.workers.dev/api/v1/blog/" + authorId,
         {
           headers: {
             Authorization: `Bearer ${token}`,

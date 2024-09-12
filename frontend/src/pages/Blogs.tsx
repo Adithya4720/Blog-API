@@ -23,7 +23,7 @@ export const Blogs: React.FC = () => {
 
   const fetchBlogs = async () => {
     try {
-      const response = await axios.get("http://localhost:8787/api/v1/blog/posts", {
+      const response = await axios.get("https://backend.hegdeadithyak.workers.dev/api/v1/blog/posts", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

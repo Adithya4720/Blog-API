@@ -16,7 +16,7 @@ export const Signup = () => {
         setError("");
 
         try {
-            const response = await axios.post("http://localhost:8787/api/v1/user/signup", {
+            const response = await axios.post("https://backend.hegdeadithyak.workers.dev/api/v1/user/signup", {
                 email: email,
                 password: password,
                 name: name,

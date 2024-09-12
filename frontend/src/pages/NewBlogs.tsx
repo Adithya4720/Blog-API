@@ -21,7 +21,7 @@ export const NewBlogs = () => {
     const publish = async () => {
         try {
             const response = await axios.post(
-            "http://localhost:8787/api/v1/blog",
+            "https://backend.hegdeadithyak.workers.dev/api/v1/blog",
             {
                 title : title,
                 content : body,
