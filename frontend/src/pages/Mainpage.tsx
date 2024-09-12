@@ -3,16 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { Blogs } from "./Blogs";
 
 export const Mainpage: React.FC = () => {
+  const navigate = useNavigate();
   const handlelogout = () => {
     localStorage.removeItem("token");
-    window.location.href = "/signin";
+    navigate("/signin");
   };
-
-  const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
   if (!token) {
-    window.location.href = "/signin";
+    navigate("/signin");
   }
   return (
     <div>

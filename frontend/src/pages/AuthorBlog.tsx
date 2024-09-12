@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface Blog {
   id: string;
@@ -10,14 +11,15 @@ interface Blog {
 
 export const AuthorBlogs: React.FC = () => {
   const [blog, setBlog] = useState<Blog | null>(null);
+  const navigate = useNavigate();
 
   const fetch_data = async () => {
     const params = window.location.pathname.split("/");
     const authorId = params[params.length - 1];
     const token = localStorage.getItem("token");
-
+    
     if (!token) {
-      window.location.href = "/signin";
+        navigate("/signin");
     }
 
     try {
