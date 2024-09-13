@@ -14,33 +14,33 @@ export const AuthorBlogs: React.FC = () => {
   const [blog, setBlog] = useState<Blog | null>(null);
   const navigate = useNavigate();
 
-  const fetch_data = async () => {
-    const params = window.location.pathname.split("/");
-    const blogId = params[params.length - 1];
-    const token = localStorage.getItem("token");
-    
-    if (!token) {
-        navigate("/signin");
-    }
-
-    try {
-      const response = await axios.get(
-        "https://backend.hegdeadithyak.workers.dev/api/v1/blog/" + blogId,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setBlog(response.data);
-    } catch (error) {
-      console.error("Error fetching blog data", error);
-    }
-  };
-
   useEffect(() => {
+    const fetch_data = async () => {
+      const params = window.location.pathname.split("/");
+      const blogId = params[params.length - 1];
+      const token = localStorage.getItem("token");
+  
+      if (!token) {
+        navigate("/signin");
+      }
+  
+      try {
+        const response = await axios.get(
+          "https://backend.hegdeadithyak.workers.dev/api/v1/blog/" + blogId,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setBlog(response.data);
+      } catch (error) {
+        console.error("Error fetching blog data", error);
+      }
+    };
+  
     fetch_data();
-  }, []);
+  });
 
 return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center py-6">

@@ -41,7 +41,7 @@ export const Blogs: React.FC = () => {
 
   useEffect(() => {
     fetchBlogs();
-  }, []);
+  });
 
   const truncateContent = (content: string, lines: number) => {
     const contentLines = content.split("\n");
