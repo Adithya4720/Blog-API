@@ -61,12 +61,7 @@ export const Signin: React.FC = () => {
     <div className="relative h-screen flex items-center justify-center bg-gray-800">
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 opacity-50 blur-2xl"></div>
 
-      <div className="relative flex flex-col md:flex-row h-[80vh] w-[90vw] max-w-6xl border border-gray-700 rounded-3xl overflow-hidden shadow-xl">
-        <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-purple-600 to-indigo-600 p-8">
-          <div className="text-white text-center max-w-md">
-            <Quote />
-          </div>
-        </div>
+      <div className="relative flex flex-col  h-[80vh] w-[90vw] max-w-6xl border border-gray-700 rounded-3xl overflow-hidden shadow-xl">
 
         <div className="flex-1 flex items-center justify-center bg-gray-900 p-8">
           <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full hover:scale-110 transition-transform duration-300">
@@ -104,7 +99,13 @@ export const Signin: React.FC = () => {
             </button>
           </div>
         </div>
+        <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-purple-600 to-indigo-600 p-8">
+          <div className="text-white text-center max-w-md">
+            <Quote />
+          </div>
+        </div>
       </div>
+      
     </div>
   );
 };
