@@ -1,4 +1,4 @@
-# [Blogify - A Blogging Platform](blogify-two-pi.vercel.app/)
+# [Blogify - A Blogging Platform](https://blogify-two-pi.vercel.app/)
 
 **Blogify** is a blogging platform inspired by Medium where users can sign in, write, and publish blogs. It provides an intuitive interface for content creators to share their thoughts, ideas, and stories with the world.
 
