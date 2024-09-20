@@ -4,7 +4,7 @@ import { Blogs } from "./Blogs";
 
 import { FaUserCircle, FaBlog, FaSignOutAlt } from "react-icons/fa";
 import axios from "axios";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 export const Mainpage: React.FC = () => {
   const navigate = useNavigate();
@@ -99,24 +99,7 @@ export const Mainpage: React.FC = () => {
         <h2 className="text-2xl font-bold mb-4 text-gray-800">Blogs</h2>
         <Blogs />
       </div>
-
-      <div>
-        <button
-          onClick={handleLogout}
-          className="absolute px-2 py-1 text-white bg-blue-500 rounded top-4 right-4"
-        >
-          Logout
-        </button>
-        <Toaster />
-
-        <button
-          className="absolute px-2 py-1 text-white bg-blue-500 rounded top-4 left-4"
-          onClick={() => navigate("/newblog")}
-        >
-          Create a Blog
-        </button>
-        <Blogs />
-      </div>
+        
     </div>
   );
 };
