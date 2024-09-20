@@ -6,7 +6,6 @@ import { FaUserCircle, FaBlog, FaSignOutAlt } from "react-icons/fa";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 
-
 export const Mainpage: React.FC = () => {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -48,7 +47,6 @@ export const Mainpage: React.FC = () => {
     fetchUsername();
   }, [token]);
 
-  // Show a loading spinner while fetching data
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -58,7 +56,6 @@ export const Mainpage: React.FC = () => {
   }
 
   return (
-
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="flex justify-between items-center mb-6">
         <div className="relative flex items-center">
@@ -103,23 +100,23 @@ export const Mainpage: React.FC = () => {
         <Blogs />
       </div>
 
-    <div>
-      <button
-        onClick={handlelogout}
-        className="absolute px-2 py-1 text-white bg-blue-500 rounded top-4 right-4"
-      >
-        Logout
-      </button>
-      <Toaster />
+      <div>
+        <button
+          onClick={handleLogout}
+          className="absolute px-2 py-1 text-white bg-blue-500 rounded top-4 right-4"
+        >
+          Logout
+        </button>
+        <Toaster />
 
-      <button
-        className="absolute px-2 py-1 text-white bg-blue-500 rounded top-4 left-4"
-        onClick={() => navigate("/newblog")}
-      >
-        Create a Blog
-      </button>
-      <Blogs />
-
+        <button
+          className="absolute px-2 py-1 text-white bg-blue-500 rounded top-4 left-4"
+          onClick={() => navigate("/newblog")}
+        >
+          Create a Blog
+        </button>
+        <Blogs />
+      </div>
     </div>
   );
 };
