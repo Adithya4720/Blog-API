@@ -4,6 +4,7 @@ import { Signup } from './pages/Signup';
 import { Mainpage } from './pages/Mainpage';
 import { NewBlogs } from './pages/NewBlogs';
 import {AuthorBlogs} from './pages/AuthorBlog';
+import { MyBlogs } from './pages/Myblogs';
 
 function App() {
 
@@ -16,6 +17,7 @@ function App() {
             <Route path='/signup' element={<Signup />} />
             <Route path='/newblog' element={<NewBlogs />} />
             <Route path='/author-blogs/:author' element={<AuthorBlogs />} />
+            <Route path='/myblogs' element={<MyBlogs />} />
         </Routes>
         </BrowserRouter>
     </>
