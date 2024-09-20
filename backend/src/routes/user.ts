@@ -2,6 +2,19 @@ import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
 import { sign, verify } from "hono/jwt";
+import { z } from 'zod';
+
+const signupSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+  name: z.string().min(8),
+});
+
+const signinSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+  name: z.string().min(8)
+});
 
 export const userRouter = new Hono<{
   Bindings: {
@@ -44,11 +57,11 @@ userRouter.get("/me", async (c) => {
     where: {
       id: userId,
     },
-    select:{
-      email:true,
-      name:true,
-      id : true,
-      posts:true
+    select: {
+      email: true,
+      name: true,
+      id: true,
+      posts: true
     }
   });
 
@@ -61,6 +74,13 @@ userRouter.post("/signup", async (c) => {
   }).$extends(withAccelerate());
 
   const body = await c.req.json();
+  console.log(body);
+  const validated = signupSchema.parse(body);
+
+  if (validated === null) {
+    c.status(400);
+    return c.json({ error: "Invalid data" });
+  }
 
   const user = await prisma.user.create({
     data: {
@@ -83,6 +103,13 @@ userRouter.post("/signin", async (c) => {
   }).$extends(withAccelerate());
 
   const body = await c.req.json();
+
+  const validated = signinSchema.parse(body);
+
+  if (validated === null) {
+    c.status(400);
+    return c.json({ error: "Invalid data" });
+  }
   const user = await prisma.user.findFirst({
     where: {
       OR: [

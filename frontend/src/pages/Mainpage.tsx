@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Blogs } from "./Blogs";
+
 import { FaUserCircle, FaBlog, FaSignOutAlt } from "react-icons/fa";
 import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
+
 
 export const Mainpage: React.FC = () => {
   const navigate = useNavigate();
@@ -12,7 +15,10 @@ export const Mainpage: React.FC = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/signin");
+    toast.success("Logout Successful");
+    setTimeout(() => {
+      navigate("/signin");
+    }, 2000);
   };
 
   const token = localStorage.getItem("token");
@@ -52,6 +58,7 @@ export const Mainpage: React.FC = () => {
   }
 
   return (
+
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="flex justify-between items-center mb-6">
         <div className="relative flex items-center">
@@ -95,6 +102,24 @@ export const Mainpage: React.FC = () => {
         <h2 className="text-2xl font-bold mb-4 text-gray-800">Blogs</h2>
         <Blogs />
       </div>
+
+    <div>
+      <button
+        onClick={handlelogout}
+        className="absolute px-2 py-1 text-white bg-blue-500 rounded top-4 right-4"
+      >
+        Logout
+      </button>
+      <Toaster />
+
+      <button
+        className="absolute px-2 py-1 text-white bg-blue-500 rounded top-4 left-4"
+        onClick={() => navigate("/newblog")}
+      >
+        Create a Blog
+      </button>
+      <Blogs />
+
     </div>
   );
 };
