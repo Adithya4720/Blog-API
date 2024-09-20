@@ -3,6 +3,7 @@ import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
 import { userRouter } from "./user";
+import { JwtTokenSignatureMismatched } from "hono/utils/jwt/types";
 
 export const bookRouter = new Hono<{
 	Bindings: {
@@ -86,6 +87,32 @@ bookRouter.get("/posts", async (c) => {
 	return c.json(posts);
 });
 
+bookRouter.get("/myblogs", async (c) => {
+	const prisma = new PrismaClient({
+		datasourceUrl : c.env?.DATABASE_URL,
+	}).$extends(withAccelerate());
+
+	const id = c.get("userId");
+	const blogs = await prisma.user.findUnique({
+		where :{
+			id : id,
+		},
+		select : {
+			posts : {
+				select : {
+					id : true,
+					title : true,
+					content : true,
+					published : true,
+					author : {select : {name : true}}
+				}
+			}
+		}
+	})
+
+	return c.json(blogs);
+});
+
 bookRouter.get("/:id", async (c) => {
 	const id = c.req.param("id");
 	console.log(id);
@@ -109,3 +136,4 @@ bookRouter.get("/:id", async (c) => {
 
 	return c.json(post);
 });
+
