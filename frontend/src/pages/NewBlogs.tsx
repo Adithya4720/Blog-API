@@ -12,7 +12,7 @@ export const NewBlogs = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    toast.success("Logout Successfully");
+    toast.success("Logout Successful");
     setTimeout(() => {
       navigate("/signin");
     }, 2000); 

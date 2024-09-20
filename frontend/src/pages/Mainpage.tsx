@@ -7,7 +7,7 @@ export const Mainpage: React.FC = () => {
   const navigate = useNavigate();
   const handlelogout = () => {
     localStorage.removeItem("token");
-    toast.success("Logout Successfully");
+    toast.success("Logout Successful");
     setTimeout(() => {
       navigate("/signin");
     }, 2000);
