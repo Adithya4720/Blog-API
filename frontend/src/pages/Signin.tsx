@@ -28,6 +28,12 @@ export const Signin: React.FC = () => {
     setLoading(true);
     setError("");
 
+    if (!emailorname || !password) {
+      setError("Please fill in both Email/Username and Password.");
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await axios.post(
         "https://backend.hegdeadithyak.workers.dev/api/v1/user/signin",
@@ -52,25 +58,25 @@ export const Signin: React.FC = () => {
   if (localStorage.getItem("token")) {
     return (
       <div className="flex items-center justify-center h-screen bg-slate-400">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-gray-900"></div>
+        <div className="w-16 h-16 border-t-2 border-b-2 border-gray-900 rounded-full animate-spin"></div>
       </div>
     );
   }
 
   return (
-    <div className="relative h-screen flex flex-col md:flex-row items-center justify-center bg-gray-800">
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 opacity-50 blur-2xl"></div>
+    <div className="relative flex flex-col items-center justify-center h-screen bg-gray-800 md:flex-row">
+      <div className="absolute inset-0 opacity-50 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 blur-2xl"></div>
 
       <div className="relative flex flex-col md:flex-row h-auto md:h-[80vh] w-[90vw] max-w-6xl border border-gray-700 rounded-3xl overflow-hidden shadow-xl">
-        <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-purple-600 to-indigo-600 p-8 md:basis-1/2">
-          <div className="text-white text-center max-w-md">
+        <div className="flex items-center justify-center flex-1 p-8 bg-gradient-to-br from-purple-600 to-indigo-600 md:basis-1/2">
+          <div className="max-w-md text-center text-white">
             <Quote />
           </div>
         </div>
 
-        <div className="flex-1 flex items-center justify-center bg-gray-900 p-4 md:p-8 md:basis-1/2">
-          <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full hover:scale-110 transition-transform duration-300">
-            <h2 className="text-3xl font-bold mb-6 text-center">Sign In</h2>
+        <div className="flex items-center justify-center flex-1 p-4 bg-gray-900 md:p-8 md:basis-1/2">
+          <div className="w-full max-w-sm p-8 transition-transform duration-300 bg-white rounded-lg shadow-lg hover:scale-110">
+            <h2 className="mb-6 text-3xl font-bold text-center">Sign In</h2>
 
             <InputBox
               field="Email or Username"
@@ -87,17 +93,17 @@ export const Signin: React.FC = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
 
-            {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+            {error && <p className="mb-4 text-sm text-red-500">{error}</p>}
 
             <button
-              className="bg-indigo-500 text-white font-semibold py-2 px-4 rounded mt-4 w-full"
+              className="w-full px-4 py-2 mt-4 font-semibold text-white bg-indigo-500 rounded"
               onClick={handlesignup}
               disabled={loading}
             >
               {loading ? "Logging in..." : "Sign In"}
             </button>
             <button
-              className="mt-4 text-slate-800 font-semibold w-full hover:underline"
+              className="w-full mt-4 font-semibold text-slate-800 hover:underline"
               onClick={() => navigate("/signup")}
             >
               Create Account?

@@ -1,12 +1,16 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Blogs } from "./Blogs";
+import toast, { Toaster } from "react-hot-toast";
 
 export const Mainpage: React.FC = () => {
   const navigate = useNavigate();
   const handlelogout = () => {
     localStorage.removeItem("token");
-    navigate("/signin");
+    toast.success("Logout Successfully");
+    setTimeout(() => {
+      navigate("/signin");
+    }, 2000);
   };
 
   const token = localStorage.getItem("token");
@@ -17,13 +21,14 @@ export const Mainpage: React.FC = () => {
     <div>
       <button
         onClick={handlelogout}
-        className="absolute top-4 right-4 bg-blue-500 text-white py-1 px-2 rounded"
+        className="absolute px-2 py-1 text-white bg-blue-500 rounded top-4 right-4"
       >
         Logout
       </button>
+      <Toaster />
 
       <button
-        className="absolute top-4 left-4 bg-blue-500 text-white py-1 px-2 rounded"
+        className="absolute px-2 py-1 text-white bg-blue-500 rounded top-4 left-4"
         onClick={() => navigate("/newblog")}
       >
         Create a Blog
