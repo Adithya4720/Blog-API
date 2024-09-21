@@ -104,7 +104,8 @@ bookRouter.get("/myblogs", async (c) => {
 					title : true,
 					content : true,
 					published : true,
-					author : {select : {name : true}}
+					likes : true,
+					author : {select : {name : true}},
 				}
 			}
 		}
