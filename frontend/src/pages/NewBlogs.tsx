@@ -49,7 +49,7 @@ export const NewBlogs = () => {
         }, 2000); 
       }
     } catch (e) {
-      console.error("Blog publish error: ", e);
+      console.log(e);
       toast.error("Error publishing blog");
     }
   };
