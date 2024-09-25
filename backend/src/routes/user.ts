@@ -61,7 +61,6 @@ userRouter.get("/me", async (c) => {
       email: true,
       name: true,
       id: true,
-      posts: true
     }
   });
 

@@ -81,37 +81,11 @@ bookRouter.get("/posts", async (c) => {
 			published: true,
 		},
 		include: {
+
 			author: { select: { name: true } },
 		},
 	});
 	return c.json(posts);
-});
-
-bookRouter.get("/myblogs", async (c) => {
-	const prisma = new PrismaClient({
-		datasourceUrl : c.env?.DATABASE_URL,
-	}).$extends(withAccelerate());
-
-	const id = c.get("userId");
-	const blogs = await prisma.user.findUnique({
-		where :{
-			id : id,
-		},
-		select : {
-			posts : {
-				select : {
-					id : true,
-					title : true,
-					content : true,
-					published : true,
-					likes : true,
-					author : {select : {name : true}},
-				}
-			}
-		}
-	})
-
-	return c.json(blogs);
 });
 
 bookRouter.get("/:id", async (c) => {
