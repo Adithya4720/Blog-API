@@ -88,6 +88,106 @@ bookRouter.get("/posts", async (c) => {
 	return c.json(posts);
 });
 
+bookRouter.post("/like", async (c) => {
+	const userId = c.get("userId");
+	const prisma = new PrismaClient({
+	  datasourceUrl: c.env?.DATABASE_URL,
+	}).$extends(withAccelerate());
+	const body = await c.req.json();
+	console.log("Request body:", body);
+  
+	if (!body.postId) {
+	  return c.json({ error: "postId is required" }, 400);
+	}
+  
+	try {
+	  await prisma.like.create({
+		data: {
+		  postId: body.postId,
+		  userId: userId,
+		},
+	  });
+	  return c.text("liked");
+	} catch (error) {
+	  console.error("Error creating like:", error);
+	  return c.json({ error: "Internal Server Error" }, 500);
+	} finally {
+	  await prisma.$disconnect();
+	}
+  });
+
+bookRouter.post("/dislike", async (c) => {
+	const userId = c.get("userId");
+	const prisma = new PrismaClient({
+		datasourceUrl: c.env?.DATABASE_URL,
+	}).$extends(withAccelerate());
+
+	const body = await c.req.json();
+	await prisma.dislike.create({
+		data: {
+			postId: body.postId,
+			userId: userId,
+		},
+	});
+	return c.text("disliked");
+});
+
+bookRouter.post("/comment", async (c) => {
+	const userId = c.get("userId");
+	const prisma = new PrismaClient({
+		datasourceUrl: c.env?.DATABASE_URL,
+	}).$extends(withAccelerate());
+
+	const body = await c.req.json();
+	await prisma.comment.create({
+		data: {
+			postId: body.postId,
+			userId: userId,
+			content: body.content,
+		},
+	});
+	return c.text("commented");
+});
+
+bookRouter.get("/numlikes", async (c) => {
+	const prisma = new PrismaClient({
+		datasourceUrl: c.env?.DATABASE_URL,
+	}).$extends(withAccelerate());
+	const postId = c.req.param("postId");
+	const likes = await prisma.like.count({
+		where: {
+			postId: postId,
+		},
+	});
+	return c.json({ likes });
+});
+
+bookRouter.get("/numdislikes", async (c) => {
+	const prisma = new PrismaClient({
+		datasourceUrl: c.env?.DATABASE_URL,
+	}).$extends(withAccelerate());
+	const postId = c.req.param("postId");
+	const dislikes = await prisma.dislike.count({
+		where: {
+			postId: postId,
+		},
+	});
+	return c.json({ dislikes });
+});
+
+bookRouter.get("/comments", async (c) => {
+	const prisma = new PrismaClient({
+		datasourceUrl: c.env?.DATABASE_URL,
+	}).$extends(withAccelerate());
+	const postId = c.req.param("postId");
+	const comments = await prisma.comment.findMany({
+		where: {
+			postId: postId,
+		},
+	});
+	return c.json(comments);
+});
+
 bookRouter.get("/:id", async (c) => {
 	const id = c.req.param("id");
 	console.log(id);

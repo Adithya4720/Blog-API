@@ -96,7 +96,7 @@ export const Mainpage: React.FC = () => {
       </div>
 
       <div className="bg-white shadow-lg rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-4 text-gray-800">Blogs</h2>
+        {/* <h2 className="text-2xl font-bold mb-4 text-gray-800">Blogs</h2> */}
         <Blogs />
       </div>
         

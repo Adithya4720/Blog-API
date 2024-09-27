@@ -13,7 +13,6 @@ const signupSchema = z.object({
 const signinSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
-  name: z.string().min(8)
 });
 
 export const userRouter = new Hono<{
@@ -61,6 +60,7 @@ userRouter.get("/me", async (c) => {
       email: true,
       name: true,
       id: true,
+      likes : true,
     }
   });
 
@@ -102,7 +102,7 @@ userRouter.post("/signin", async (c) => {
   }).$extends(withAccelerate());
 
   const body = await c.req.json();
-
+  console.log(body);
   const validated = signinSchema.parse(body);
 
   if (validated === null) {
