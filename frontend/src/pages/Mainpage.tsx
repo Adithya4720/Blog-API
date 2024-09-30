@@ -89,6 +89,15 @@ export const Mainpage: React.FC = () => {
                   className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-200"
                   onClick={() => {
                     setIsDropdownOpen(false);
+                    navigate("/myaccount");
+                  }}
+                >
+                  <FaUserCircle className="mr-2 text-blue-500" /> My Account
+                </button>
+                <button
+                  className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-200"
+                  onClick={() => {
+                    setIsDropdownOpen(false);
                     navigate("/myblogs");
                   }}
                 >
