@@ -1,0 +1,35 @@
+/* Import the Inter font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Set global font to Inter */
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Animated Background */
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animated-background {
+  background: linear-gradient(45deg, #000, #fff); /* Black to white gradient */
+  background-size: 300% 300%;
+  animation: gradientAnimation 15s ease infinite;
+}
+
+/* Custom styling for blog cards */
+.bg-white {
+  background-color: #fff;
+}
+
+.text-gray-900 {
+  color: #1a202c;
+}

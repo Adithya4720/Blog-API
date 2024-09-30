@@ -91,30 +91,30 @@ bookRouter.get("/posts", async (c) => {
 bookRouter.post("/like", async (c) => {
 	const userId = c.get("userId");
 	const prisma = new PrismaClient({
-	  datasourceUrl: c.env?.DATABASE_URL,
+		datasourceUrl: c.env?.DATABASE_URL,
 	}).$extends(withAccelerate());
 	const body = await c.req.json();
 	console.log("Request body:", body);
-  
+
 	if (!body.postId) {
-	  return c.json({ error: "postId is required" }, 400);
+		return c.json({ error: "postId is required" }, 400);
 	}
-  
+
 	try {
-	  await prisma.like.create({
-		data: {
-		  postId: body.postId,
-		  userId: userId,
-		},
-	  });
-	  return c.text("liked");
+		await prisma.like.create({
+			data: {
+				postId: body.postId,
+				userId: userId,
+			},
+		});
+		return c.text("liked");
 	} catch (error) {
-	  console.error("Error creating like:", error);
-	  return c.json({ error: "Internal Server Error" }, 500);
+		console.error("Error creating like:", error);
+		return c.json({ error: "Internal Server Error" }, 500);
 	} finally {
-	  await prisma.$disconnect();
+		await prisma.$disconnect();
 	}
-  });
+});
 
 bookRouter.post("/dislike", async (c) => {
 	const userId = c.get("userId");
@@ -188,6 +188,26 @@ bookRouter.get("/comments", async (c) => {
 	return c.json(comments);
 });
 
+bookRouter.get("/myblogs", async (c) => {
+	const prisma = new PrismaClient({
+		datasourceUrl: c.env?.DATABASE_URL,
+	}).$extends(withAccelerate());
+
+	const userid = c.get("userId");
+	const blogs = await prisma.post.findMany({
+		where: {
+			authorId: userid
+		},
+		include :{
+			author : true,
+		}
+	})
+
+	return c.json({
+		posts: blogs
+	});
+})
+
 bookRouter.get("/:id", async (c) => {
 	const id = c.req.param("id");
 	console.log(id);
@@ -197,13 +217,13 @@ bookRouter.get("/:id", async (c) => {
 
 	const post = await prisma.post.findUnique({
 		where: {
-			id:id,
+			id: id,
 		},
 		select: {
 			title: true,
 			content: true,
 			published: true,
-			author : {select : {name : true}}
+			author: { select: { name: true } }
 		}
 	});
 

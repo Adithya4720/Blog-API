@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ValidToken } from "../components/ValidToken";
+import './MyBlogs.css';  // Import your CSS file
 
 interface Blog {
   id: string;
@@ -70,44 +71,44 @@ export const MyBlogs: React.FC = () => {
   }
 
   return (
-    <div>
-        
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center py-6">
-      {blogs.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
-          {blogs.map((blog) => (
-            <div
-              key={blog.id}
-              className="bg-white shadow-lg rounded-lg p-6 transition-transform transform hover:scale-105 cursor-pointer"
-              onClick={() => navigate(`/author-blogs/${blog.id}`)}
-            >
-              <div className="flex justify-between items-center mb-2">
-                <div className="text-2xl font-semibold text-gray-800">
-                  {blog.title}
+    <div className="animated-background min-h-screen py-12 px-6">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">My Blogs</h1>
+        {blogs.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {blogs.map((blog) => (
+              <div
+                key={blog.id}
+                className="relative bg-white shadow-md rounded-lg p-6 transform transition-transform hover:scale-105 hover:shadow-lg cursor-pointer"
+                onClick={() => navigate(`/author-blogs/${blog.id}`)}
+              >
+                <div className="flex justify-between items-center mb-2">
+                  <h2 className="text-xl font-semibold text-gray-800">
+                    {blog.title}
+                  </h2>
+                  {blog.published ? (
+                    <span className="bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded">
+                      Published
+                    </span>
+                  ) : (
+                    <span className="bg-red-100 text-red-800 text-xs font-semibold px-3 py-1 rounded">
+                      Draft
+                    </span>
+                  )}
                 </div>
-                {blog.published ? (
-                  <span className="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded">
-                    Published
-                  </span>
-                ) : (
-                  <span className="bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded">
-                    Draft
-                  </span>
-                )}
+                <div className="text-gray-600 text-sm mb-4">
+                  {truncateContent(blog.content, 3)}
+                </div>
+                <div className="text-xs text-gray-500 absolute bottom-4">
+                  Author: {blog.author.name}
+                </div>
               </div>
-              <div className="text-gray-600 text-sm mb-4">
-                {truncateContent(blog.content, 3)}
-              </div>
-              <div className="text-xs text-gray-500">
-                Author: {blog.author.name}
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-lg text-gray-600 font-medium">No blogs found.</p>
-      )}
-    </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-lg text-gray-600 font-medium text-center">No blogs found.</p>
+        )}
+      </div>
     </div>
   );
 };
