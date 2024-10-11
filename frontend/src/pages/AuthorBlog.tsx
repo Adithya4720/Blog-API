@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { FaThumbsUp, FaThumbsDown, FaUser, FaClock, FaComment } from "react-icons/fa";
+import {
+  FaThumbsUp,
+  FaThumbsDown,
+  FaUser,
+  FaClock,
+  FaComment,
+} from "react-icons/fa";
 import Confetti from "react-confetti";
 import { motion } from "framer-motion";
 
@@ -18,6 +24,7 @@ export const AuthorBlogs: React.FC = () => {
   const [blog, setBlog] = useState<Blog | null>(null);
   const [hasLiked, setHasLiked] = useState(false);
   const [hasDisliked, setHasDisliked] = useState(false);
+  const [likes, setLikes] = useState<number>(0);
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState<string[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -50,22 +57,54 @@ export const AuthorBlogs: React.FC = () => {
 
     fetch_data();
   }, [navigate, token]);
-  
-  const handleLike = async (blogID: string) => {
+
+  const isliked = async () => {
+    if (!token) {
+      console.error("User is not authenticated. No token found.");
+      return;
+    }
+
+
+    const params = window.location.pathname.split("/");
+    const blogId = params[params.length - 1];
+    try {
+      const response = await axios.post(
+        "https://localhost:8787/api/v1/blog/numlikes",
+          { postId: blogId },
+          { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log(response);
+      setLikes(response.data.likes);
+    } catch (error) {
+      console.error("Error fetching the number:", error);
+    }
+  };
+  isliked();
+  const handleLike = async () => {
+    if (!token) {
+      console.error("User is not authenticated. No token found.");
+      return;
+    }
+
     if (!hasLiked) {
-      setHasLiked(true);
-      setHasDisliked(false);
-      setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 3000);
-    
       try {
-        await axios.post(
+        setHasLiked(true);
+        setHasDisliked(false);
+        setShowConfetti(true);
+
+        setTimeout(() => setShowConfetti(false), 3000);
+        const params = window.location.pathname.split("/");
+        const blogId = params[params.length - 1];
+        const response = await axios.post(
           "http://localhost:8787/api/v1/blog/like",
-          { postId: blogID },
+          { postId: blogId },
           { headers: { Authorization: `Bearer ${token}` } }
         );
+
+        console.log("Blog liked successfully:", response.data);
       } catch (error) {
         console.error("Error liking the blog:", error);
+        setHasLiked(false);
       }
     }
   };
@@ -87,7 +126,7 @@ export const AuthorBlogs: React.FC = () => {
   if (!blog) {
     return (
       <div className="min-h-screen bg-gray-200 flex items-center justify-center">
-        <motion.div 
+        <motion.div
           className="bg-white p-4 rounded-full shadow-lg"
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
@@ -100,14 +139,14 @@ export const AuthorBlogs: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-200 py-12 px-4 sm:px-6 lg:px-8">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="max-w-4xl mx-auto bg-white shadow-2xl rounded-lg overflow-hidden"
       >
         <div className="px-6 py-8 sm:p-10">
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
@@ -115,7 +154,7 @@ export const AuthorBlogs: React.FC = () => {
           >
             {blog.title}
           </motion.h1>
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.5 }}
@@ -125,14 +164,18 @@ export const AuthorBlogs: React.FC = () => {
             <span className="mr-4">{blog.author.name}</span>
             <FaClock className="mr-2" />
             <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
-            <span className={`ml-auto px-3 py-1 rounded-full text-xs font-semibold ${
-              blog.published ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-            }`}>
+            <span
+              className={`ml-auto px-3 py-1 rounded-full text-xs font-semibold ${
+                blog.published
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-800"
+              }`}
+            >
               {blog.published ? "Published" : "Draft"}
             </span>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.5 }}
@@ -146,7 +189,7 @@ export const AuthorBlogs: React.FC = () => {
               ))}
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.5 }}
@@ -155,14 +198,20 @@ export const AuthorBlogs: React.FC = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => handleLike(blog.id)}
+              onClick={() => handleLike()}
               disabled={hasLiked}
               className={`px-6 py-2 rounded-full transition-all ${
-                hasLiked ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-blue-100"
+                hasLiked
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-blue-100"
               } flex items-center space-x-2`}
             >
-              <FaThumbsUp className={`transition-transform ${hasLiked ? "scale-125" : ""}`} />
-              <span>{hasLiked ? "Liked" : "Like"}</span>
+              <FaThumbsUp
+                className={`transition-transform ${
+                  hasLiked ? "scale-125" : ""
+                }`}
+              />
+              <span>{hasLiked ? likes : likes + 1}</span>
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -170,16 +219,22 @@ export const AuthorBlogs: React.FC = () => {
               onClick={handleDislike}
               disabled={hasDisliked}
               className={`px-6 py-2 rounded-full transition-all ${
-                hasDisliked ? "bg-red-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-red-100"
+                hasDisliked
+                  ? "bg-red-500 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-red-100"
               } flex items-center space-x-2`}
             >
-              <FaThumbsDown className={`transition-transform ${hasDisliked ? "scale-125" : ""}`} />
+              <FaThumbsDown
+                className={`transition-transform ${
+                  hasDisliked ? "scale-125" : ""
+                }`}
+              />
               <span>{hasDisliked ? "Disliked" : "Dislike"}</span>
             </motion.button>
           </motion.div>
         </div>
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1, duration: 0.5 }}
@@ -192,7 +247,7 @@ export const AuthorBlogs: React.FC = () => {
           <div className="space-y-4 mb-6">
             {comments.length > 0 ? (
               comments.map((comment, index) => (
-                <motion.div 
+                <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -203,7 +258,9 @@ export const AuthorBlogs: React.FC = () => {
                 </motion.div>
               ))
             ) : (
-              <p className="text-gray-500 italic">No comments yet. Be the first to comment!</p>
+              <p className="text-gray-500 italic">
+                No comments yet. Be the first to comment!
+              </p>
             )}
           </div>
           <div>

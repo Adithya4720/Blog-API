@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import {userRouter} from "./routes/user";
 import {bookRouter} from "./routes/blog";
+import { accountrouter } from "./routes/account";
 import { cors } from "hono/cors";
 
 const app = new Hono<{
