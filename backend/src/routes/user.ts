@@ -3,6 +3,7 @@ import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
 import { sign, verify } from "hono/jwt";
 import { z } from 'zod';
+import { cors } from "hono/cors";
 
 const signupSchema = z.object({
   email: z.string().email(),
@@ -24,6 +25,14 @@ export const userRouter = new Hono<{
     userId: string;
   };
 }>();
+
+userRouter.use(
+  cors({
+    origin: "https://blogify-two-pi.vercel.app",
+    allowMethods: ["GET", "POST", "PUT", "DELETE"], // Allow these HTTP methods
+    allowHeaders: ["Authorization", "Content-Type"], // Allow these headers
+  })
+);
 
 userRouter.use("/me", async (c, next) => {
   const authheader = c.req.header("Authorization");

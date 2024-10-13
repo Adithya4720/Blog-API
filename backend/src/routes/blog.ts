@@ -147,17 +147,19 @@ bookRouter.post("/comment", async (c) => {
 	return c.text("commented");
 });
 
-bookRouter.get("/numlikes", async (c) => {
+bookRouter.post("/numlikes", async (c) => {
 	const prisma = new PrismaClient({
 		datasourceUrl: c.env?.DATABASE_URL,
 	}).$extends(withAccelerate());
-	const postId = c.req.param("postId");
+	const body = await c.req.json()
+	const postId = body.postId;
+	console.log(postId);
 	const likes = await prisma.like.count({
 		where: {
 			postId: postId,
 		},
 	});
-	return c.json({ likes });
+	return c.json({ "likes":likes });
 });
 
 bookRouter.get("/numdislikes", async (c) => {
