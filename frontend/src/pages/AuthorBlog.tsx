@@ -63,12 +63,12 @@ export const AuthorBlogs: React.FC = () => {
       try {
         const [likesResponse, alreadyLikedResponse] = await Promise.all([
           axios.post(
-            "http://localhost:8787/api/v1/blog/numlikes",
+            "https://backend.hegdeadithyak.workers.dev/api/v1/blog/numlikes",
             { postId: blogId },
             { headers: { Authorization: `Bearer ${token}` } }
           ),
           axios.post(
-            "http://localhost:8787/api/v1/blog/alreadyliked",
+            "https://backend.hegdeadithyak.workers.dev/api/v1/blog/alreadyliked",
             { postId: blogId },
             { headers: { Authorization: `Bearer ${token}` } }
           ),
@@ -97,7 +97,7 @@ export const AuthorBlogs: React.FC = () => {
 
       const blogId = getBlogIdFromUrl();
       await axios.post(
-        "http://localhost:8787/api/v1/blog/like",
+        "https://backend.hegdeadithyak.workers.dev/api/v1/blog/like",
         { postId: blogId },
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -28,7 +28,7 @@ export const userRouter = new Hono<{
 
 userRouter.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://blogify-two-pi.vercel.app/",
     allowMethods: ["GET", "POST", "PUT", "DELETE"], // Allow these HTTP methods
     allowHeaders: ["Authorization", "Content-Type"], // Allow these headers
   })
