@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {
@@ -6,7 +6,7 @@ import {
   FaThumbsDown,
   FaUser,
   FaClock,
-  FaComment,
+  // FaComment,
 } from "react-icons/fa";
 import Confetti from "react-confetti";
 import { motion } from "framer-motion";
@@ -25,28 +25,31 @@ export const AuthorBlogs: React.FC = () => {
   const [hasLiked, setHasLiked] = useState(false);
   const [hasDisliked, setHasDisliked] = useState(false);
   const [likes, setLikes] = useState<number>(0);
-  const [comment, setComment] = useState("");
-  const [comments, setComments] = useState<string[]>([]);
+  // const [comment, setComment] = useState("");
+  // const [comments, setComments] = useState<string[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
+
+  // Helper function to extract blogId from the URL
+  const getBlogIdFromUrl = () => {
+    const params = window.location.pathname.split("/");
+    return params[params.length - 1];
+  };
 
   useEffect(() => {
     if (!token) {
       navigate("/signin");
     }
 
-    const fetch_data = async () => {
-      const params = window.location.pathname.split("/");
-      const blogId = params[params.length - 1];
+    const fetchBlogData = async () => {
+      const blogId = getBlogIdFromUrl();
 
       try {
         const response = await axios.get(
           `https://backend.hegdeadithyak.workers.dev/api/v1/blog/${blogId}`,
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
         setBlog(response.data);
@@ -55,73 +58,68 @@ export const AuthorBlogs: React.FC = () => {
       }
     };
 
-    fetch_data();
+    const checkLikeStatus = async () => {
+      const blogId = getBlogIdFromUrl();
+      try {
+        const [likesResponse, alreadyLikedResponse] = await Promise.all([
+          axios.post(
+            "https://backend.hegdeadithyak.workers.dev/api/v1/blog/numlikes",
+            { postId: blogId },
+            { headers: { Authorization: `Bearer ${token}` } }
+          ),
+          axios.post(
+            "https://backend.hegdeadithyak.workers.dev/api/v1/blog/alreadyliked",
+            { postId: blogId },
+            { headers: { Authorization: `Bearer ${token}` } }
+          ),
+        ]);
+
+        setLikes(likesResponse.data.likes);
+        setHasLiked(alreadyLikedResponse.data);
+      } catch (error) {
+        console.error("Error fetching like status:", error);
+      }
+    };
+
+    fetchBlogData();
+    checkLikeStatus();
   }, [navigate, token]);
 
-  const isliked = async () => {
-    if (!token) {
-      console.error("User is not authenticated. No token found.");
-      return;
-    }
+  const handleLike = useCallback(async () => {
+    if (!token || hasLiked) return;
 
-
-    const params = window.location.pathname.split("/");
-    const blogId = params[params.length - 1];
     try {
-      const response = await axios.post(
-        "https://localhost:8787/api/v1/blog/numlikes",
-          { postId: blogId },
-          { headers: { Authorization: `Bearer ${token}` } }
+      setHasLiked(true);
+      setHasDisliked(false);
+      setShowConfetti(true);
+
+      setTimeout(() => setShowConfetti(false), 3000);
+
+      const blogId = getBlogIdFromUrl();
+      await axios.post(
+        "https://backend.hegdeadithyak.workers.dev/api/v1/blog/like",
+        { postId: blogId },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      console.log(response);
-      setLikes(response.data.likes);
     } catch (error) {
-      console.error("Error fetching the number:", error);
+      console.error("Error liking the blog:", error);
+      setHasLiked(false);
     }
-  };
-  isliked();
-  const handleLike = async () => {
-    if (!token) {
-      console.error("User is not authenticated. No token found.");
-      return;
-    }
+  }, [token, hasLiked]);
 
-    if (!hasLiked) {
-      try {
-        setHasLiked(true);
-        setHasDisliked(false);
-        setShowConfetti(true);
-
-        setTimeout(() => setShowConfetti(false), 3000);
-        const params = window.location.pathname.split("/");
-        const blogId = params[params.length - 1];
-        const response = await axios.post(
-          "http://localhost:8787/api/v1/blog/like",
-          { postId: blogId },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-
-        console.log("Blog liked successfully:", response.data);
-      } catch (error) {
-        console.error("Error liking the blog:", error);
-        setHasLiked(false);
-      }
-    }
-  };
-
-  const handleDislike = () => {
+  const handleDislike = useCallback(() => {
     if (!hasDisliked) {
       setHasDisliked(true);
       setHasLiked(false);
     }
-  };
+  }, [hasDisliked]);
 
-  const handleCommentSubmit = () => {
-    if (comment.trim()) {
-      setComments([...comments, comment]);
-      setComment("");
-    }
-  };
+  // const handleCommentSubmit = useCallback(() => {
+  //   if (comment.trim()) {
+  //     setComments((prevComments) => [...prevComments, comment]);
+  //     setComment("");
+  //   }
+  // }, [comment]);
 
   if (!blog) {
     return (
@@ -198,7 +196,7 @@ export const AuthorBlogs: React.FC = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => handleLike()}
+              onClick={handleLike}
               disabled={hasLiked}
               className={`px-6 py-2 rounded-full transition-all ${
                 hasLiked
@@ -211,7 +209,7 @@ export const AuthorBlogs: React.FC = () => {
                   hasLiked ? "scale-125" : ""
                 }`}
               />
-              <span>{hasLiked ? likes : likes + 1}</span>
+              <span>{likes}</span>
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -229,63 +227,12 @@ export const AuthorBlogs: React.FC = () => {
                   hasDisliked ? "scale-125" : ""
                 }`}
               />
-              <span>{hasDisliked ? "Disliked" : "Dislike"}</span>
             </motion.button>
           </motion.div>
+
+          {showConfetti && <Confetti recycle={false} />}
         </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1, duration: 0.5 }}
-          className="bg-gray-100 px-6 py-8 sm:p-10"
-        >
-          <h2 className="text-2xl font-semibold mb-6 flex items-center">
-            <FaComment className="mr-2" />
-            Comments
-          </h2>
-          <div className="space-y-4 mb-6">
-            {comments.length > 0 ? (
-              comments.map((comment, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 * index, duration: 0.5 }}
-                  className="bg-white p-4 rounded-lg shadow"
-                >
-                  {comment}
-                </motion.div>
-              ))
-            ) : (
-              <p className="text-gray-500 italic">
-                No comments yet. Be the first to comment!
-              </p>
-            )}
-          </div>
-          <div>
-            <textarea
-              className="w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-              rows={4}
-              placeholder="Write your comment..."
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-            />
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleCommentSubmit}
-              className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors"
-            >
-              Submit Comment
-            </motion.button>
-          </div>
-        </motion.div>
       </motion.div>
-
-      {showConfetti && (
-        <Confetti width={window.innerWidth} height={window.innerHeight} />
-      )}
     </div>
   );
 };
