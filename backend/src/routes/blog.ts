@@ -99,6 +99,22 @@ bookRouter.post("/like", async (c) => {
 	}
 
 	try {
+		console.log(userId);
+
+		// Check if the like already exists
+		const existingLike = await prisma.like.findUnique({
+			where: {
+				userId_postId: {
+					userId: userId,
+					postId: body.postId,
+				},
+			},
+		});
+
+		if (existingLike) {
+			return c.json({ message: "You have already liked this post" }, 200);
+		}
+
 		await prisma.like.create({
 			data: {
 				postId: body.postId,
@@ -159,7 +175,30 @@ bookRouter.post("/numlikes", async (c) => {
 			postId: postId,
 		},
 	});
-	return c.json({ "likes":likes });
+	return c.json({ "likes": likes });
+});
+
+bookRouter.post("/alreadyliked", async (c) => {
+	const prisma = new PrismaClient({
+		datasourceUrl: c.env?.DATABASE_URL,
+	}).$extends(withAccelerate());
+	const body = await c.req.json()
+	const postId = body.postId;
+	const userId = c.get("userId");
+
+	console.log(userId);
+	const likes = await prisma.like.findUnique({
+		where: {
+			userId_postId: {
+				userId: userId,
+				postId: postId,
+			},
+		},
+	});
+	if(likes){
+		return c.json(true);
+	}
+	return c.json(false);
 });
 
 bookRouter.get("/numdislikes", async (c) => {
@@ -198,8 +237,8 @@ bookRouter.get("/myblogs", async (c) => {
 		where: {
 			authorId: userid
 		},
-		include :{
-			author : true,
+		include: {
+			author: true,
 		}
 	})
 

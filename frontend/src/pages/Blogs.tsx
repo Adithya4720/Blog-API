@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUser, FaClock } from "react-icons/fa";
 
@@ -23,27 +23,27 @@ export const Blogs: React.FC = () => {
     navigate("/signin");
   }
 
-  const fetchBlogs = async () => {
-    try {
-      const response = await axios.get(
-        "https://backend.hegdeadithyak.workers.dev/api/v1/blog/posts",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setBlogs(response.data);
-    } catch (e) {
-      console.error("Blog fetch error: ", e);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const response = await axios.get(
+          "https://backend.hegdeadithyak.workers.dev/api/v1/blog/posts",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setBlogs(response.data);
+      } catch (e) {
+        console.error("Blog fetch error: ", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchBlogs();
-  }, []);
+  }, [navigate, token]);
 
   const truncateContent = (content: string, words: number) => {
     const wordArray = content.split(' ');
